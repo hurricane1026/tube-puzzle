@@ -1,20 +1,6 @@
 /*
  * Copyright (C) 2021 hurricane <l@stdb.io>. All rights reserved.
  */
- /* +------------------------------------------------------------------+
- |                                                                  |
- |                                                                  |
- |  #####                                                           |
- | #     # #####   ##   #####  #####  # #    # ######  ####   ####  |
- | #         #    #  #  #    # #    # # ##   # #      #      #      |
- |  #####    #   #    # #    # #    # # # #  # #####   ####   ####  |
- |       #   #   ###### #####  #####  # #  # # #           #      # |
- | #     #   #   #    # #   #  #   #  # #   ## #      #    # #    # |
- |  #####    #   #    # #    # #    # # #    # ######  ####   ####  |
- |                                                                  |
- |                                                                  |
- +------------------------------------------------------------------+
- */
 
 
 #include <gtest/gtest.h>
@@ -32,6 +18,7 @@ class TubeTest : public ::testing::Test {
   tube<4> t5 {5, "11"};
   tube<4> t6 {6, "1234"};
   tube<4> t7 {7, "123"};
+  tube<4> t8 {8, "24"};
 
 };
 
@@ -90,6 +77,16 @@ TEST_F(TubeTest, push_fail_Test) {
   ASSERT_EQ(water.size(), 2);
 
 
+};
+
+TEST_F(TubeTest, push_empty_Test) {
+  CV water {'1', '1'};
+  auto ok = t3.push(water);
+  ASSERT_TRUE(ok);
+  ASSERT_EQ(water.size(), 0);
+  auto [slots, color] = t3.top_slots();
+  ASSERT_EQ(slots, 2);
+  ASSERT_EQ(color, '1');
 };
 
 TEST_F(TubeTest, push_ok_norest_Test) {
@@ -160,6 +157,17 @@ TEST_F(TubeTest, fill_fail_Test) {
   ASSERT_EQ(top_c6, '4');
 };
 
+TEST_F(TubeTest, fill_from_empty_Test) {
+  auto done = t3.fill(t5);
+  ASSERT_FALSE(done);
+};
+
+TEST_F(TubeTest, fill_from_self_Test) {
+  auto done = t3.fill(t3);
+  ASSERT_FALSE(done);
+};
+
+
 TEST_F(TubeTest, fill_ok_Test1) {
   auto done = t4.fill(t5);
   ASSERT_TRUE(done);
@@ -171,7 +179,42 @@ TEST_F(TubeTest, fill_ok_Test1) {
   ASSERT_EQ(slot5, 0);
   ASSERT_EQ(tc4, 0);
   ASSERT_EQ(tc5, '1');
+};
 
+
+TEST_F(TubeTest, fill_ok_Test2) {
+  auto done = t2.fill(t4);
+  ASSERT_TRUE(done);
+
+  auto [slot2, tc2] = t2.top_slots();
+  auto [slot4, tc4] = t4.top_slots();
+
+  ASSERT_EQ(slot2, 2);
+  ASSERT_EQ(slot4, 0);
+  ASSERT_EQ(tc2, '1');
+  ASSERT_EQ(tc4, '1');
+
+  done = t6.fill(t8);
+  ASSERT_TRUE(done);
+  auto [slot8, tc8] = t8.top_slots();
+  ASSERT_EQ(slot8, 1);
+  ASSERT_EQ(tc8, '4');
+
+  ASSERT_EQ(t6, t7);
+};
+
+TEST_F(TubeTest, fill_ok_Test3) {
+  auto done = t8.fill(t3);
+  ASSERT_TRUE(done);
+
+  auto [slot8, tc8] = t8.top_slots();
+  ASSERT_EQ(slot8, 3);
+  ASSERT_EQ(tc8, '2');
+
+  auto [slot3, tc3] = t3.top_slots();
+  ASSERT_EQ(slot3, 3);
+  ASSERT_EQ(tc3, '4');
+  
 };
 
 

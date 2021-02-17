@@ -1,20 +1,6 @@
 /*
  * Copyright (C) 2021 hurricane <l@stdb.io>. All rights reserved.
- */
- /* +------------------------------------------------------------------+
- |                                                                  |
- |                                                                  |
- |  #####                                                           |
- | #     # #####   ##   #####  #####  # #    # ######  ####   ####  |
- | #         #    #  #  #    # #    # # ##   # #      #      #      |
- |  #####    #   #    # #    # #    # # # #  # #####   ####   ####  |
- |       #   #   ###### #####  #####  # #  # # #           #      # |
- | #     #   #   #    # #   #  #   #  # #   ## #      #    # #    # |
- |  #####    #   #    # #    # #    # # #    # ######  ####   ####  |
- |                                                                  |
- |                                                                  |
- +------------------------------------------------------------------+
- */
+*/
 
 
 #ifndef TUBE_PUZZLE_TUBE_HPP_
@@ -34,9 +20,19 @@ bool color_comp(char dst, char src) {
 }
 
 template<std::uint8_t C>
+class tube;
+
+template<std::uint8_t C>
+bool operator == (const tube<C>& t1, const tube<C>& t2);
+
+template<std::uint8_t C>
 class tube {
  using CV = std::vector<char>;
  public:
+  inline tube(int16_t no, const std::string& input):
+    no(no),
+    content(input.begin(), input.end())
+  { }
   inline tube(int16_t no, const CV& input):
     no(no),
     content(input)
@@ -86,24 +82,24 @@ class tube {
     auto [top_slot_num, top_color] = top_slots();
     if (top_slot_num == 0)
       return false;
-    else if (top_color != color.front()) {
+    else if (!color_comp(top_color, color.front())) {
       return false;
     }
     else {
-      // the slots is not less than the input
-      if (top_slot_num >= color.size()) {
-        for (auto i = 0; i< color.size(); ++i) {
-          this->content.push_back(top_color);
-        }
-        color.clear();
+      std::uint16_t push_len;
+      std::uint16_t rest_of_color_len;
+      if (top_slot_num <= color.size()) {
+        push_len = top_slot_num;
+        rest_of_color_len = color.size() - top_slot_num;
       } else {
-        // top_slot_num < color.size()
-        for (auto i = 0; i< top_slot_num; ++i) {
-          this->content.push_back(top_color);
-        }
-        auto rest_of_color_len = color.size() - top_slot_num;
-        color.resize(rest_of_color_len);
+        push_len = color.size();
+        rest_of_color_len = 0UL;
       }
+
+      for (auto i = 0; i < push_len; ++i) {
+        content.push_back(color.front());
+      }
+      color.resize(rest_of_color_len);
       return true;
     }
   }
@@ -121,15 +117,19 @@ class tube {
       }
       content.resize(content.size() - pop_size);
       // this is for RVO
-      return CV(top_color, pop_size);
+      return CV(pop_size, top_color);
     }
   }
 
   inline bool fill(tube& dst) {
+    if (this == &dst) {
+      return false;
+    }
     auto [dst_slot_num, dst_top_color] = dst.top_slots();
     if (dst_slot_num == 0)
       return false;
     auto [src_slot_num, src_top_color] = this->top_slots();
+    if (src_slot_num == C) return false;
     if (!color_comp(dst_top_color, src_top_color))
       return false;
     auto water = this->pop();
@@ -143,19 +143,14 @@ class tube {
  private:
   std::int16_t no;
   std::vector<char> content;
+
+  friend bool operator ==<> (const tube<C>&, const tube<C>&);
 };
 
-template<std::uint8_t N, std::uint8_t C>
-class game {
- public:
-  inline game(const std::string& path) {
-
-  }
-
- private:
-  std::vector<tube<C>> tubes;
-  std::set<std::string> hashcodes;
-};
+template<std::uint8_t C>
+bool operator == (const tube<C>& t1, const tube<C>& t2) {
+  return t1.content == t2.content;
+}
 
 
 
