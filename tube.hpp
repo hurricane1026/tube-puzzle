@@ -13,7 +13,7 @@
 #include <cassert>
 #include <set>
 
-bool color_comp(char dst, char src) {
+inline bool color_comp(char dst, char src) {
   assert(src != 0);
   if (dst == 0) return true;
   else return dst == src;
