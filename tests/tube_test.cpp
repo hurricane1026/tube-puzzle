@@ -38,17 +38,17 @@ TEST_F(TubeTest, CstrTest) {
 };
 
 TEST_F(TubeTest, PureTest) {
-  ASSERT_FALSE(t1.is_pure());
-  ASSERT_TRUE(t2.is_pure());
-  ASSERT_FALSE(t3.is_pure());
-  ASSERT_FALSE(t4.is_pure());
+  ASSERT_FALSE(t1.pure());
+  ASSERT_TRUE(t2.pure());
+  ASSERT_FALSE(t3.pure());
+  ASSERT_FALSE(t4.pure());
 };
 
 TEST_F(TubeTest, EmptyTest) {
-  ASSERT_FALSE(t1.is_empty());
-  ASSERT_FALSE(t2.is_empty());
-  ASSERT_TRUE(t3.is_empty());
-  ASSERT_FALSE(t4.is_empty());
+  ASSERT_FALSE(t1.empty());
+  ASSERT_FALSE(t2.empty());
+  ASSERT_TRUE(t3.empty());
+  ASSERT_FALSE(t4.empty());
 };
 
 TEST_F(TubeTest, top_slots_TEST) {

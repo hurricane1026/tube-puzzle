@@ -54,7 +54,7 @@ class tube {
     return std::string(content);
   }
 
-  inline bool is_pure() const {
+  inline bool pure() const {
     if (content.size() == C) {
       auto c = content.front();
       for (auto cc : content) {
@@ -65,12 +65,12 @@ class tube {
     return false;
   }
 
-  inline bool is_empty() const {
+  inline bool empty() const {
     return content.empty();
   }
 
   inline std::tuple<std::uint8_t, char> top_slots() const {
-    if (is_empty()) {
+    if (empty()) {
       return std::make_tuple(C, 0);
     } else {
       return std::make_tuple(C - content.size(), content.back());
@@ -138,6 +138,10 @@ class tube {
       this->push(water);
     }
     return done;
+  }
+
+  inline std::uint16_t get_no() const {
+    return no;
   }
 
  private:
