@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# build
+build
+
+# LSP support
+compile_commands.json
+.ccls-cache/
