@@ -51,7 +51,7 @@ class tube {
   { }
 
   inline std::string show() const {
-    return std::string(content);
+    return std::string(content.begin(), content.end());
   }
 
   inline bool pure() const {
@@ -155,6 +155,7 @@ template<std::uint8_t C>
 bool operator == (const tube<C>& t1, const tube<C>& t2) {
   return t1.content == t2.content;
 }
+
 
 
 

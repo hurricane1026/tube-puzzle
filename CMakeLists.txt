@@ -24,3 +24,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_subdirectory(yaml-cpp)
 add_subdirectory(tests)
 
+
+add_executable(solver solver.cpp)
+target_link_libraries(solver yaml-cpp fmt pthread)
+
+file(COPY ${PUZZLE_SOURCE_DIR}/game.yaml
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+

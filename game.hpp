@@ -16,18 +16,18 @@ using boost::bad_lexical_cast;
 template<std::uint8_t C>
 class game {
  public:
-  inline game():
+  inline game(const std::string& file):
     tubes_(),
     hashcodes_()
   {
-    YAML::Node game_node = YAML::LoadFile("game.yaml");
+    YAML::Node game_node = YAML::LoadFile(file);
     auto node = game_node["empty-tube"];
     std::string empty_tube = node.as<std::string>();
 
     auto tubes = game_node["tubes"];
     try {
       empty_tube_num_ = boost::lexical_cast<unsigned int>(empty_tube);
-      fmt::print("free_empty_tube_num is {}", empty_tube_num_);
+      //fmt::print("free_empty_tube_num is {}\n", empty_tube_num_);
 
 
       uint16_t no = 0;
@@ -35,7 +35,7 @@ class game {
         std::string content = iter->as<std::string>();
         tube<C>* temp_tube_ptr = new tube<C>(no++, content);
         tubes_.push_back(temp_tube_ptr);
-        fmt::print(content);
+        //fmt::print("{}\n", content);
       }
 
       for (unsigned int empty_no = 0; empty_no < empty_tube_num_; ++empty_no)
@@ -43,6 +43,11 @@ class game {
         tubes_.push_back(new tube<C>(no++));
       }
 
+      //fmt::print("tubes_'s size = {}\n", tubes_.size());
+      //for (auto& t : tubes_) {
+        //fmt::print("no: {}, content: {}\n",
+            //t->get_no(), t->show());
+      /*}*/
       hash_record();
 
     }
@@ -53,9 +58,9 @@ class game {
 
   inline game(const game& g):
     tubes_(),
-    hashcodes_(g.hashcodes)
+    hashcodes_(g.hashcodes_)
   {
-    for (auto t : g.tubes) {
+    for (auto t : g.tubes_) {
       tube<C>* new_t = new tube<C>(*t);
       tubes_.push_back(new_t);
     }
@@ -67,10 +72,10 @@ class game {
     }
   }
 
-  inline std::vector<tube<C>> availables() const {
+  inline std::vector<tube<C>*> availables() const {
     std::vector<tube<C>*> avails;
     for (auto t : tubes_) {
-      if (!t->is_pure()) {
+      if (!t->pure()) {
         avails.push_back(t);
       }
     }
@@ -79,9 +84,9 @@ class game {
 
   inline std::string genhash() const {
      std::string code;
-    for (auto & c : hashcodes_) {
+    for (auto & t : tubes_) {
       code += "|";
-      code += c;
+      code += t->show();
     }
     return code;
   }
@@ -120,12 +125,27 @@ class game {
     return actions;
   }
 
-  inline bool do_fill(std::pair<std::uint8_t, std::uint8_t>& action) {
+  inline bool do_fill(const std::pair<std::uint8_t, std::uint8_t>& action) {
     auto [src, dst] = action;
     assert(tubes_[src]->get_no() == src);
     assert(tubes_[dst]->get_no() == dst);
     tubes_[src]->fill(*tubes_[dst]);
     return hash_record();
+  }
+
+  inline std::vector<game<C>*> next() {
+    std::vector<game<C>*> next_games;
+    auto actions = future_actions();
+    for (auto& act : actions) {
+      game<C>* new_g = new game<C>(*this);
+      bool alive = new_g->do_fill(act);
+      if (alive) {
+        next_games.push_back(new_g);
+      } else {
+        delete new_g;
+      }
+    }
+    return next_games;
   }
 
   inline bool success() const {
