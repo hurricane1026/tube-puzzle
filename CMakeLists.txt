@@ -12,6 +12,7 @@ find_package(GTest REQUIRED)
 
 ### bernoulli's headers
 include_directories(${PUZZLE_SOURCE_DIR}/)
+include_directories(${PUZZLE_SOURCE_DIR}/yaml-cpp/include)
 
 
 set(CMAKE_CXX_STANDARD 20)
@@ -20,5 +21,6 @@ set(COMMON_WARNING_FLAGS "${COMMON_WARNING_FLAGS} -Wall -Werror -Wextra -Wendif-
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 ### unit tests code
+add_subdirectory(yaml-cpp)
 add_subdirectory(tests)
 

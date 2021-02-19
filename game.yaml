@@ -1,0 +1,28 @@
+---
+tube-cap: 4
+empty-tube: 2
+# lightblue: l
+# red: r
+# darkgreen: d
+# pink: i
+# middlegreen: m
+# brown: w
+# lightgreen/cyan: c
+# purple: p
+# gray: g
+# orange: o
+# blue: b
+# yellow: y
+tubes:
+  - "lrdi"
+  - "mwcp"
+  - "mwir"
+  - "rogg"
+  - "dorg"
+  - "gbbc"
+  - "ipop"
+  - "ldyc"
+  - "wcml"
+  - "pdyl"
+  - "ombi"
+  - "bywy"

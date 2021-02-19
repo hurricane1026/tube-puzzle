@@ -26,5 +26,8 @@ add_executable(tests ${TEST_SRC})
 target_include_directories(tests PRIVATE ${GTEST_INCLUDE_DIRS})
 target_include_directories(tests PRIVATE ${GMOCK_INCLUDE_DIRS})
 
-target_link_libraries(tests gtest GTest::Main)
+target_link_libraries(tests gtest GTest::Main yaml-cpp fmt)
+
+file(COPY ${PUZZLE_SOURCE_DIR}/game.yaml
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
